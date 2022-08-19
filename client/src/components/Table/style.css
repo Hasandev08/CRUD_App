@@ -1,0 +1,9 @@
+.app {
+    margin: 100px !important;
+}
+.app button {
+    margin-bottom: 5px !important;
+}
+.app table {
+    border: 1px solid black !important;
+}
