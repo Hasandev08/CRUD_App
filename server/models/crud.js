@@ -2,22 +2,22 @@ const mongoose = require("mongoose");
 
 const crudSchema = new mongoose.Schema({
   name: {
+    maxlength: 50,
     type: String,
-    maxlength: 255,
     minlength: 3,
     required: true,
   },
   age: {
     type: Number,
-    max: 100,
-    min: 0,
+    max: 99,
+    min: 10,
     required: true,
     trim: true,
   },
   country: {
     type: String,
-    maxlength: 255,
-    minlength: 3,
+    maxlength: 50,
+    minlength: 5,
     required: true,
   },
   email: {

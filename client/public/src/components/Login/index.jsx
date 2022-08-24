@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 
-function Login({ setToken }) {
+function Login() {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "",
@@ -34,46 +34,34 @@ function Login({ setToken }) {
     });
   };
 
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+[.][A-Za-z]{2,}$/;
-
   const login = async (e) => {
     e.preventDefault();
 
     const { email, password } = values;
 
-    if (!email) {
-      alert("Email is required");
-    } else if (!emailRegex.test(email)) {
-      alert("Please enter a valid email");
-    } else if (!password) {
-      alert("Password is required");
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (res.status === 404 || !data) {
+      console.log("Error");
     } else {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (res.status === 400 || !data) {
-        alert(data.message);
+      if (data.token) {
+        localStorage.setItem("token", data.token)
+        navigate("/table");
+        console.log("Logged in successful");
       } else {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          setToken(data.token);
-          navigate("/table");
-          console.log("Logged in successful");
-        } else {
-          alert(data.message);
-          console.log("Error");
-        }
+        console.log("Error");
       }
     }
   };

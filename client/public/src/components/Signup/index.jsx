@@ -50,55 +50,32 @@ function Signup() {
     });
   };
 
-  const nameRegex = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+[.][A-Za-z]{2,}$/;
-
   const registerData = async (e) => {
     e.preventDefault();
 
     const { firstName, lastName, email, password } = values;
 
-    if (!firstName) {
-      alert("First Name is missing");
-    } else if (!nameRegex.test(firstName)) {
-      alert("Please enter a valid first name");
-    } else if (firstName.length < 5 || firstName.length > 50) {
-      alert("The length of name should be between 3 and 50");
-    } else if (!lastName) {
-      alert("First Name is missing");
-    } else if (!nameRegex.test(lastName)) {
-      alert("Please enter a valid last name");
-    } else if (lastName.length < 5 || lastName.length > 50) {
-      alert("The length of name should be between 3 and 50");
-    } else if (!email) {
-      alert("Email is required");
-    } else if (!emailRegex.test(email)) {
-      alert("Please enter a valid email");
-    } else if (!password) {
-      alert("Password is required");
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (res.status === 404 || !data) {
+      console.log("Error");
     } else {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (res.status === 401) {
-        alert(data.message)
-      } else {
-        navigate("/");
-        console.log("Sign Up successful");
-      }
+      navigate("/");
+      console.log("Sign Up successful");
     }
   };
 

@@ -11,7 +11,7 @@ router.post("/signup", async (req, res) => {
 
   let user = await User.findOne({ email: req.body.email });
 
-  if (user) return res.status(403).send("Email already exists");
+  if (user) return res.status(401).send({ message: "User already registered"});
 
   user = new User(
     _.pick(req.body, ["firstName", "lastName", "email", "password"])

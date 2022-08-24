@@ -42,7 +42,7 @@ router.get("/table", async (req, res) => {
   }
 });
 
-router.get("/table/:id", auth, async (req, res) => {
+router.get("/table/:id", async (req, res) => {
   try {
     const { id } = req.params;
 

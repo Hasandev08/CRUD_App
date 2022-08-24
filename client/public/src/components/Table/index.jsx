@@ -1,7 +1,5 @@
-import { rootShouldForwardProp } from "@mui/material/styles/styled";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { callApi } from "../api";
 import "./style.css";
 
 const Table = () => {
@@ -9,17 +7,15 @@ const Table = () => {
   const [userData, setUserData] = useState([]);
   console.log(userData);
 
-  const getData =  async(e) => {
-   const res= await callApi('get','table',{"Content-Type": "application/json"})
-   const data=await res.json()
-    // const res = await fetch(`${process.env.REACT_APP_BASE_URL}/table`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
+  const getData = async (e) => {
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/table`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    // const data = await res.json();
+    const data = await res.json();
     console.log(data);
 
     if (res.status === 422 || !data) {
