@@ -1,134 +1,153 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { registerSchema } from "../../utils/schemas/index";
+import Alert from "@mui/material/Alert";
 import "./style.css";
 
 function Signup() {
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
 
-  const [input] = useState([
-    {
-      label: "First Name",
-      name: "firstName",
-      type: "text",
-      values: values.firstName,
-    },
-    {
-      label: "Last Name",
-      name: "lastName",
-      type: "text",
-      values: values.lastName,
-    },
-    {
-      label: "Email",
-      name: "email",
-      type: "email",
-      values: values.email,
-    },
-    {
-      label: "Password",
-      name: "password",
-      type: "password",
-      values: values.password,
-    },
-  ]);
+  const registerData = async (values) => {
+    const { name, age, country, email, password, cPassword } = values;
 
-  const setData = (e) => {
-    console.log(e.target.value);
-    const { name, value } = e.target;
-
-    setValues((val) => {
-      return {
-        ...val,
-        [name]: value,
-      };
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, age, country, email, password, cPassword }),
     });
-  };
 
-  const nameRegex = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+[.][A-Za-z]{2,}$/;
+    const data = await res.json();
+    console.log(data);
 
-  const registerData = async (e) => {
-    e.preventDefault();
-
-    const { firstName, lastName, email, password } = values;
-
-    if (!firstName) {
-      alert("First Name is missing");
-    } else if (!nameRegex.test(firstName)) {
-      alert("Please enter a valid first name");
-    } else if (firstName.length < 5 || firstName.length > 50) {
-      alert("The length of name should be between 3 and 50");
-    } else if (!lastName) {
-      alert("First Name is missing");
-    } else if (!nameRegex.test(lastName)) {
-      alert("Please enter a valid last name");
-    } else if (lastName.length < 5 || lastName.length > 50) {
-      alert("The length of name should be between 3 and 50");
-    } else if (!email) {
-      alert("Email is required");
-    } else if (!emailRegex.test(email)) {
-      alert("Please enter a valid email");
-    } else if (!password) {
-      alert("Password is required");
+    if (res.status === 401) {
+      setError(data.message);
+      console.log(data.message);
     } else {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (res.status === 401) {
-        alert(data.message)
-      } else {
-        navigate("/");
-        console.log("Sign Up successful");
-      }
+      navigate("/");
+      console.log("Sign Up successful");
     }
   };
 
+  const formik = useFormik({
+    initialValues: { name: "", age: "", country: "", email: "", password: "", cPassword: "" },
+    validateOnBlur: true,
+    onSubmit: registerData,
+    validationSchema: registerSchema,
+  });
+
   return (
     <div className="signup-form">
-      <form className="form-inner">
-        <div className="form-input">
-          {input.map((item, index) => (
-            <div
-              key={index.toString()}
-              className="mb-3 col-lg-6 col-md-6 col-12"
-            >
+      <form className="form-inner" onSubmit={formik.handleSubmit}>
+        <div className="signup-form-input">
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              placeholder="Name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <span className="register-errors">
+              {formik.touched.name && formik.errors.name
+                ? formik.errors.name
+                : null}
+            </span>
+          </div>
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
+            <input
+              type="number"
+              className="form-control"
+              name="age"
+              placeholder="Age"
+              value={formik.values.age}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <span className="register-errors">
+              {formik.touched.age && formik.errors.age
+                ? formik.errors.age
+                : null}
+            </span>
+          </div>
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
+            <input
+              type="text"
+              className="form-control"
+              name="country"
+              placeholder="Country"
+              value={formik.values.country}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <span className="register-errors">
+              {formik.touched.country && formik.errors.country
+                ? formik.errors.country
+                : null}
+            </span>
+          </div>
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              placeholder="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <span className="register-errors">
+              {formik.touched.email && formik.errors.email
+                ? formik.errors.email
+                : null}
+            </span>
+          </div>
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              placeholder="Password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <span className="signup-errors">
+              {formik.touched.password && formik.errors.password
+                ? formik.errors.password
+                : null}
+            </span>
+          </div>
+          <div className="mb-3 col-lg-6 col-md-6 col-12">
               <input
-                type={item.type}
+                type="password"
                 className="form-control"
-                name={item.name}
-                placeholder={item.label}
-                onChange={setData}
-                // value={item.values}
+                name="cPassword"
+                placeholder="Confirm Password"
+                value={formik.values.cPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              <span className="signup-errors">
+                {formik.touched.cPassword && formik.errors.cPassword
+                  ? formik.errors.cPassword
+                  : null}
+              </span>
             </div>
-          ))}
         </div>
-        <button type="submit" className="login-button" onClick={registerData}>
+        <button type="submit" className="login-button">
           Sign Up
         </button>
         <div className="link">
           <Link to="/">Have an account already? Click here to login</Link>
         </div>
       </form>
+      {error ? <Alert severity="error">{error}</Alert> : null}
     </div>
   );
 }

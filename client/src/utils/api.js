@@ -1,4 +1,4 @@
-export const callApi = (method = "get", url = "", body, header) => {
+export const callApi = (method = "", url = "", header) => {
   try {
     return fetch(`${process.env.REACT_APP_BASE_URL}/${url}`, {
       method,
@@ -11,3 +11,5 @@ export const callApi = (method = "get", url = "", body, header) => {
     console.error(error);
   }
 };
+
+

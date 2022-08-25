@@ -1,4 +1,4 @@
-const { User } = require("../models/user");
+const { Crud } = require("../models/crud");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
@@ -9,7 +9,7 @@ router.post("/login", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await Crud.findOne({ email: req.body.email });
   if (!user)
     return res.status(400).send({
       message: "Invalid Email or Password",

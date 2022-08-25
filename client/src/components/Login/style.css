@@ -12,9 +12,9 @@
 .form-inner {
     margin: 20px;
 }
-.form-input {
+.email-form-input {
     width: 600px !important;
-    margin: 5px 0px 0px 90px;
+    margin: 5px 0px 0px 90px !important;
     padding-left: 5px;
 }
 .form-inner button {
@@ -22,9 +22,9 @@
   color: #fff;
   border: 0.5px solid #e6e6e6;
   border-radius: 7px;
-  padding: 8px 20px;
-  margin: 10px auto 0;
-  width: 62%;
+  padding: 8px 10px;
+  margin: 10px 20px 0px 20px !important;
+  width: 62% !important;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 600;
   font-size: 15px;
@@ -33,7 +33,12 @@
   box-shadow: 0 3px 15px #0000001a;
 }
 .link {
-    margin-top: 10px;
+    margin: 10px auto;
     font-weight: 100;
     font-size: x-small;
+}
+.login-errors {
+  color: red;
+  font-size: small;
+  display: flex;
 }

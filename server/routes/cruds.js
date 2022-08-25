@@ -1,36 +1,41 @@
-const { Crud } = require("../models/crud");
-const auth = require("../middleware/auth")
+const { Crud, validate } = require("../models/crud");
 const express = require("express");
+const bcrypt = require("bcrypt");
+const _ = require("lodash");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { name, age, country, email } = req.body;
+  const { error } = validate(req.body);
 
-  if (!name || !age || !country || !email) {
-    res.status(404).send("Some data is missing");
-  }
+  if (error) return res.status(400).send(error.details[0].message);
 
-  try {
-    const preuser = await Crud.findOne({ email: email });
-    console.log(preuser);
+  if (req.body.password !== req.body.cPassword)
+    return res.status(400).send("The passwords does not match");
 
-    if (preuser) {
-      res.status(404).send("The user already exists");
-    } else {
-      let addUser = new Crud({
-        name,
-        age,
-        country,
-        email,
-      });
+  let user = await Crud.findOne({ email: req.body.email });
 
-      addUser = await addUser.save();
-      res.status(201).json(addUser);
-      console.log(addUser);
-    }
-  } catch (error) {
-    res.status(404).send(error);
-  }
+  if (user) return res.status(401).send({ message: "User already registered" });
+  
+  user = new Crud(
+    _.pick(req.body, [
+      "name",
+      "age",
+      "country",
+      "email",
+      "password",
+      "cPassword",
+    ])
+  );
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+  user.cPassword = await bcrypt.hash(user.cPassword, salt);
+  await user.save();
+
+  const token = user.generateAuthToken();
+  res
+    .header("x-auth-token", token)
+    .send(_.pick(user, ["id", "name", "age", "country", "email"]));
 });
 
 router.get("/table", async (req, res) => {

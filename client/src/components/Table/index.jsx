@@ -1,7 +1,7 @@
-import { rootShouldForwardProp } from "@mui/material/styles/styled";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { callApi } from "../api";
+import { callApi } from "../../utils/api";
+
 import "./style.css";
 
 const Table = () => {
@@ -9,18 +9,11 @@ const Table = () => {
   const [userData, setUserData] = useState([]);
   console.log(userData);
 
-  const getData =  async(e) => {
-   const res= await callApi('get','table',{"Content-Type": "application/json"})
-   const data=await res.json()
-    // const res = await fetch(`${process.env.REACT_APP_BASE_URL}/table`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-
-    // const data = await res.json();
-    console.log(data);
+  const getData = async (e) => {
+    const res = await callApi("get", "table", {
+      "Content-Type": "application/json",
+    });
+    const data = await res.json();
 
     if (res.status === 422 || !data) {
       console.log("Error");
@@ -35,12 +28,10 @@ const Table = () => {
   }, []);
 
   const deleteUser = async (id) => {
-    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/delete/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const res = await callApi("delete", `delete/${id}`, {
+      "Content-Type": "application/json",
     });
+
     const data = await res.json();
     console.log(data);
 
@@ -65,23 +56,26 @@ const Table = () => {
             Add User
           </button>
         </Link>
-        <button type="button" className="btn btn-primary" onClick={handleLogOut}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleLogOut}
+        >
           Logout
         </button>
       </div>
       <table className="table">
-        <thead className="table-dark">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Country</th>
-            <th>Email</th>
-            <th></th>
-            <th></th>
+        <thead>
+          <tr className="table-dark">
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Age</th>
+            <th scope="col">Country</th>
+            <th scope="col">Email</th>
+            <th scope="col"></th>
           </tr>
         </thead>
-        <tbody className="row">
+        <tbody>
           {userData.map((item, index) => (
             <tr key={index.toString()}>
               <th>{index + 1}</th>
@@ -89,7 +83,7 @@ const Table = () => {
               <td>{item.age}</td>
               <td>{item.country}</td>
               <td>{item.email}</td>
-              <td>
+              <td className="function_buttons">
                 <button
                   type="button"
                   className="btn btn-success"
@@ -97,8 +91,6 @@ const Table = () => {
                 >
                   View
                 </button>
-              </td>
-              <td>
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -106,8 +98,6 @@ const Table = () => {
                 >
                   Edit
                 </button>
-              </td>
-              <td>
                 <button
                   type="button"
                   className="btn btn-danger"

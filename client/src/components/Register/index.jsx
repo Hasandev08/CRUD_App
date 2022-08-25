@@ -1,128 +1,152 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { registerSchema } from "../../utils/schemas/index";
 import "./style.css";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    name: "",
-    age: "",
-    country: "",
-    email: "",
-  });
 
-  const [input] = useState([
-    {
-      label: "Name",
-      name: "name",
-      values: values.name,
-    },
-    {
-      label: "Age",
-      name: "age",
-      type: "number",
-      values: values.age,
-    },
-    {
-      label: "Country",
-      name: "country",
-      values: values.country,
-    },
-    {
-      label: "Email",
-      name: "email",
-      type: "email",
-      values: values.email,
-    },
-  ]);
+  const addData = async (values) => {
+    const { name, age, country, email, password, cPassword } = values;
 
-  const setData = (e) => {
-    console.log(e.target.value);
-    const { name, value } = e.target;
-
-    setValues((val) => {
-      return {
-        ...val,
-        [name]: value,
-      };
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        age,
+        country,
+        email,
+        password,
+        cPassword,
+      }),
     });
-  };
 
-  const nameRegex = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
-  const countryRegex = /^[A-Za-z]+$/;
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+[.][A-Za-z]{2,}$/;
+    const data = await res.json();
+    console.log(data);
 
-  const addData = async (e) => {
-    e.preventDefault();
-
-    const { name, age, country, email } = values;
-    if (!name) {
-      alert("Please enter your name");
-    } else if (!nameRegex.test(name)) {
-      alert("Please enter a valid name");
-    } else if (name.length < 3 || name.length > 50) {
-      alert("The length of name should be between 3 and 50");
-    } else if (!age) {
-      alert("Please enter age");
-    } else if (age <= 10 || age >= 100) {
-      alert("The age should be betweeen 10 and 99");
-    } else if (!country) {
-      alert("Please enter country");
-    } else if (!countryRegex.test(country)) {
-      alert("Please enter alpha characters");
-    } else if (!email) {
-      alert("Please enter email");
-    } else if (!emailRegex.test(email)) {
-      alert("Please enter a valid email");
-    } else if (email.length <= 5 || email.length >= 255) {
-      alert("The characters of email should be between 5 and 255");
+    if (res.status === 404 || !data) {
+      console.log("Error");
     } else {
-      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          age,
-          country,
-          email,
-        }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (res.status === 404 || !data) {
-        console.log("Error");
-      } else {
-        navigate("/table");
-        console.log("Data added successfully");
-      }
+      navigate("/table");
+      console.log("Data added successfully");
     }
   };
 
+  const formik = useFormik({
+    initialValues: { name: "", age: "", country: "", email: "", password: "", cPassword: "" },
+    validateOnBlur: true,
+    onSubmit: addData,
+    validationSchema: registerSchema,
+  });
+
   return (
     <div className="register-form">
-      <form method="POST" className="form-inner">
-        <div className="form-input">
-          {input.map((item, index) => (
-            <div
-              key={index.toString()}
-              className="mb-3 col-lg-6 col-md-6 col-12"
-            >
+      <form method="POST" className="form-inner" onSubmit={formik.handleSubmit}>
+        <div className="form-inner">
+          <div className="form-input">
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
               <input
-                type={item.type || "text"}
+                type="text"
                 className="form-control"
-                name={item.name}
-                placeholder={item.label}
-                onChange={setData}
-                // value={item.values}
+                name="name"
+                placeholder="Name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              <span className="register-errors">
+                {formik.touched.name && formik.errors.name
+                  ? formik.errors.name
+                  : null}
+              </span>
             </div>
-          ))}
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
+              <input
+                type="number"
+                className="form-control"
+                name="age"
+                placeholder="Age"
+                value={formik.values.age}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <span className="register-errors">
+                {formik.touched.age && formik.errors.age
+                  ? formik.errors.age
+                  : null}
+              </span>
+            </div>
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
+              <input
+                type="text"
+                className="form-control"
+                name="country"
+                placeholder="Country"
+                value={formik.values.country}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <span className="register-errors">
+                {formik.touched.country && formik.errors.country
+                  ? formik.errors.country
+                  : null}
+              </span>
+            </div>
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                placeholder="Email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <span className="register-errors">
+                {formik.touched.email && formik.errors.email
+                  ? formik.errors.email
+                  : null}
+              </span>
+            </div>
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                placeholder="Password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <span className="signup-errors">
+                {formik.touched.password && formik.errors.password
+                  ? formik.errors.password
+                  : null}
+              </span>
+            </div>
+            <div className="mb-3 col-lg-6 col-md-6 col-12">
+              <input
+                type="password"
+                className="form-control"
+                name="cPassword"
+                placeholder="Confirm Password"
+                value={formik.values.cPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <span className="signup-errors">
+                {formik.touched.cPassword && formik.errors.cPassword
+                  ? formik.errors.cPassword
+                  : null}
+              </span>
+            </div>
+          </div>
         </div>
-        <button type="submit" className="button" onClick={addData}>
+        <button type="submit">
           Add
         </button>
       </form>

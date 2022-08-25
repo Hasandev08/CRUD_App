@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const config = require("config");
+const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 
 const crudSchema = new mongoose.Schema({
   name: {
@@ -28,8 +31,38 @@ const crudSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  password: {
+    type: String,
+    minlength: 5,
+    required: true,
+    unique: true,
+  },
+  cPassword: {
+    type: String,
+    minlength: 5,
+    required: true,
+    unique: true,
+  }
 });
+
+crudSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign({ _id: this._id }, config.get("jwtPrivateKey"));
+  return token;
+};
 
 const Crud = mongoose.model("Crud", crudSchema);
 
+function validateCrud(crud) {
+  const schema = {
+    name: Joi.string().min(3).max(255).required(),
+    age: Joi.number().integer().required(),
+    country: Joi.string().min(5).max(50).required(),
+    email: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(255).required(),
+    cPassword: Joi.string().min(5).max(255).required(),
+  };
+  return Joi.validate(crud, schema);
+}
+
 exports.Crud = Crud;
+exports.validate = validateCrud;

@@ -14,7 +14,7 @@
 }
 .form-input {
   width: 600px !important;
-  margin: 5px 0px 0px 90px;
+  margin: 5px 0px 0px 70px !important;
   padding-left: 5px;
 }
 .form-inner button {
@@ -31,4 +31,9 @@
 }
 .form-inner .login-button:hover {
   box-shadow: 0 3px 15px #0000001a;
+}
+.register-errors {
+  color: red;
+  font-size: small;
+  display: flex;
 }

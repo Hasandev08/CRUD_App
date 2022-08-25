@@ -23,7 +23,7 @@
   border: 0.5px solid #e6e6e6;
   border-radius: 7px;
   padding: 8px 20px;
-  margin: 10px auto 0;
+  margin: 10px 10px 0 0 !important;
   width: 62%;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 600;

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const config = require("config");
 const cruds = require("./routes/cruds");
-const users = require("./routes/users");
 const auth = require("./routes/auth");
 const express = require("express");
 const cors = require("cors");
@@ -20,7 +19,6 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(cruds);
-app.use(users);
 app.use(auth);
 
 const port = process.env.PORT || 5000;
