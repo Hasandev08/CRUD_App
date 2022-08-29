@@ -1,71 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useFormik } from "formik";
+import { editSchema } from "../../utils/schemas/index";
 import "./style.css";
 
 const Edit = () => {
   const navigate = useNavigate();
-
-  const [values, setValues] = useState({
-    name: "",
-    age: "",
-    country: "",
-    email: "",
-  });
-
-  console.log("The values are", values);
-
-  const setData = (e) => {
-    console.log(e.target.value);
-    const { name, value } = e.target;
-
-    setValues((val) => {
-      return {
-        ...val,
-        [name]: value,
-      };
-    });
-  };
+  const location = useLocation();
+  
+  const { data } = location.state
+  
+  const [isAdmin, setIsAdmin] = useState(data.isAdmin);
 
   const { id } = useParams("");
-  console.log(id);
 
-  const getData = async (e) => {
-    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/table/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-    });
-
-    const data = await res.json();
-    console.log(data);
-
-    if (res.status === 422 || !data) {
-      console.log("Error");
-    } else {
-      setValues(data);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const updateUser = async (e) => {
-    e.preventDefault();
-
-    const { name, age, country, email } = values;
+  const updateUser = async (values) => {
+    const { name, age, country, email, isAdmin } = values;
     const res = await fetch(`${process.env.REACT_APP_BASE_URL}/edit/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
       },
       body: JSON.stringify({
         name,
         age,
         country,
         email,
+        isAdmin,
       }),
     });
 
@@ -80,48 +42,108 @@ const Edit = () => {
     }
   };
 
+  const formik = useFormik({
+    initialValues: {
+      name: data.name,
+      age: data.age,
+      country: data.country,
+      email: data.email,
+      isAdmin,
+    },
+    validateOnBlur: true,
+    onSubmit: updateUser,
+    validationSchema: editSchema,
+  });
+
   return (
     <div className="edit-form">
-      <form className="form-inner">
+      <form className="form-inner" onSubmit={formik.handleSubmit}>
         <div className="form-input">
           <div className="mb-3 col-lg-6 col-md-6 col-12">
             <input
               type="text"
               className="form-control"
               name="name"
-              onChange={setData}
-              value={values.name}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            <span className="edit-errors">
+              {formik.touched.name && formik.errors.name
+                ? formik.errors.name
+                : null}
+            </span>
           </div>
           <div className="mb-3 col-lg-6 col-md-6 col-12">
             <input
               type="number"
               className="form-control"
               name="age"
-              onChange={setData}
-              value={values.age}
+              value={formik.values.age}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            <span className="edit-errors">
+              {formik.touched.age && formik.errors.age
+                ? formik.errors.age
+                : null}
+            </span>
           </div>
           <div className="mb-3 col-lg-6 col-md-6 col-12">
             <input
               type="text"
               className="form-control"
               name="country"
-              onChange={setData}
-              value={values.country}
+              value={formik.values.country}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            <span className="edit-errors">
+              {formik.touched.country && formik.errors.country
+                ? formik.errors.country
+                : null}
+            </span>
           </div>
           <div className="mb-3 col-lg-6 col-md-6 col-12">
             <input
               type="email"
               className="form-control"
               name="email"
-              onChange={setData}
-              value={values.email}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            <span className="edit-errors">
+              {formik.touched.email && formik.errors.email
+                ? formik.errors.email
+                : null}
+            </span>
           </div>
         </div>
-        <button type="submit" className="edut-button" onClick={updateUser}>
+        <div className="form-check">
+          {isAdmin ? (
+            <input
+              type="checkbox"
+              name="isAdmin"
+              value={formik.values.isAdmin}
+              checked
+              onClick={(e) => setIsAdmin(e.target.checked)}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+          ) : (
+            <input
+              type="checkbox"
+              name="isAdmin"
+              value={formik.values.isAdmin}
+              onClick={(e) => setIsAdmin(e.target.checked)}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+          )}
+          <label> Is Admin? </label>
+        </div>
+        <button type="submit" className="edit-button">
           Edit
         </button>
       </form>

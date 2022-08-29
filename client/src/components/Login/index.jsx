@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import { loginSchema } from "../../utils/schemas/index";
 import { Link, useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ function Login({ setToken }) {
       if (data.token) {
         localStorage.setItem("token", data.token);
         setToken(data.token);
-        navigate("/table")
+        navigate("/table");
         console.log("Logged in successful");
       } else {
         console.log("Error");
@@ -88,12 +88,12 @@ function Login({ setToken }) {
           Login
         </button>
         <div className="link">
-          <Link to="/signup">
+          <Link to="/register">
             Don't have an account? Click here to register
           </Link>
         </div>
-        {error ? <Alert severity="error">{error}</Alert> : null}
       </form>
+      {error ? <Alert severity="error">{error}</Alert> : null}
     </div>
   );
 }

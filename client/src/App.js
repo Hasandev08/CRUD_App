@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Login from "./components/Login";
-import Signup from "./components/Signup";
 import Table from "./components/Table";
 import Register from "./components/Register";
 import Edit from "./components/Edit";
@@ -17,10 +16,9 @@ function App() {
           {token && <Route path="/edit/:id" exact element={<Edit />} />}
           {token && <Route path="/details/:id" exact element={<Details />} />}
           {token && <Route path="/table" exact element={<Table />} />}
-          {token && <Route path="/register" exact element={<Register />} />}
-          <Route path="/signup" exact element={<Signup />} />
+          <Route path="/register" exact element={<Register />} />
           <Route path="/" exact element={<Login setToken={setToken} />} />
-        </Routes>
+        </Routes> 
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ const crudSchema = new mongoose.Schema({
   age: {
     type: Number,
     max: 99,
-    min: 10,
     required: true,
     trim: true,
   },
@@ -42,6 +41,9 @@ const crudSchema = new mongoose.Schema({
     minlength: 5,
     required: true,
     unique: true,
+  },
+  isAdmin: {
+    type: Boolean
   }
 });
 

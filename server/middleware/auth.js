@@ -1,17 +1,25 @@
 const jwt = require("jsonwebtoken");
-const config = require("config");
+const { Crud } = require("../models/crud");
 
-function auth(req, res, next) {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).send("Access Denied. No token provided");
-
+const auth = async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, config.get("jwtPrivateKey"));
-    req.user = decoded;
-    next();
-  } catch (ex) {
-    res.status(400).send("Invalid token");
+    const header = req.headers;
+    let user = jwt.verify(
+      header.authorization.replace("Bearer ", ""),
+      "mySecureKey"
+    );
+    const userData = await Crud.find({ _id: user._id });
+
+    if (userData[0].isAdmin) {
+      next();
+    } else {
+      return res.status(401).send("Permission denied !!!!");
+    }
+  } catch (error) {
+    return res.status(401).send("Permission denied!");
   }
-}
+};
 
 module.exports = auth;
+
+// if(header.authorization){}

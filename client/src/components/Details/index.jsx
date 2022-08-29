@@ -5,10 +5,8 @@ import { useParams } from "react-router-dom";
 
 const Details = () => {
   const [userData, setUserData] = useState([]);
-  console.log("Data:", userData);
 
   const { id } = useParams("");
-  console.log("Id: ", id);
 
   const getData = async () => {
     const res = await fetch(`${process.env.REACT_APP_BASE_URL}/table/${id}`, {
@@ -40,18 +38,18 @@ const Details = () => {
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
           <div className="view col-lg-6 col-md-6 col-12">
-            <h3 className="mt-3">
+            <h4 className="mt-3">
               Name: <span>{userData.name}</span>
-            </h3>
-            <h3 className="mt-3">
+            </h4>
+            <h4 className="mt-3">
               Age: <span>{userData.age}</span>
-            </h3>
-            <h3 className="mt-3">
+            </h4>
+            <h4 className="mt-3">
               Country: <span>{userData.country}</span>
-            </h3>
-            <p>
+            </h4>
+            <h4 className="mt-3">
               Email: <span>{userData.email}</span>
-            </p>
+            </h4>
           </div>
         </CardContent>
       </Card>

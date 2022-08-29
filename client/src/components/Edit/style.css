@@ -18,12 +18,11 @@
   padding-left: 5px;
 }
 .form-inner .edit-button {
-  background-color: green;
   color: #fff;
   border: 0.5px solid #e6e6e6;
   border-radius: 7px;
   padding: 8px 20px;
-  margin: 10px 10px 0 0 !important;
+  margin: 10px 35px 0 0 !important;
   width: 62%;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 600;
@@ -31,4 +30,16 @@
 }
 .form-inner .login-button:hover {
   box-shadow: 0 3px 15px #0000001a;
+}
+.edit-errors {
+  color: red;
+  font-size: small;
+  display: flex;
+}
+.form-check {
+  margin-right: 50px;
+  font-size: 12px;
+}
+.form-check label {
+  margin-left: 5px;
 }

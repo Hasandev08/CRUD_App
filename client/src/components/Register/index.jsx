@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { registerSchema } from "../../utils/schemas/index";
+import { callApi } from "../../utils/api";
+import Alert from "@mui/material/Alert";
 import "./style.css";
 
 const Register = () => {
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
 
   const addData = async (values) => {
     const { name, age, country, email, password, cPassword } = values;
 
-    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const res = await callApi(
+      "post",
+      "register",
+      JSON.stringify({
         name,
         age,
         country,
@@ -23,21 +26,36 @@ const Register = () => {
         password,
         cPassword,
       }),
-    });
+      {
+        "Content-Type": "application/json",
+      }
+    );
 
     const data = await res.json();
     console.log(data);
 
-    if (res.status === 404 || !data) {
-      console.log("Error");
+    if (res.status === 401) {
+      setError(data.message);
+      console.log(data.message);
     } else {
-      navigate("/table");
+      if (token) {
+        navigate("/table");
+      } else {
+        navigate("/");
+      }
       console.log("Data added successfully");
     }
   };
 
   const formik = useFormik({
-    initialValues: { name: "", age: "", country: "", email: "", password: "", cPassword: "" },
+    initialValues: {
+      name: "",
+      age: "",
+      country: "",
+      email: "",
+      password: "",
+      cPassword: "",
+    },
     validateOnBlur: true,
     onSubmit: addData,
     validationSchema: registerSchema,
@@ -146,10 +164,14 @@ const Register = () => {
             </div>
           </div>
         </div>
-        <button type="submit">
-          Add
-        </button>
+        <button type="submit">{token ? "Add" : "Signup"}</button>
+        {!token ? (
+          <div className="link">
+            <Link to="/">Have an account already? Click here to login</Link>
+          </div>
+        ) : null}
       </form>
+      {error ? <Alert severity="error">{error}</Alert> : null}
     </div>
   );
 };
