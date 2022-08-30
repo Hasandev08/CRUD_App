@@ -29,7 +29,7 @@ const Details = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  });
 
   return (
     <div className="container mt-3">
