@@ -8,6 +8,8 @@ import "./style.css";
 
 const Register = () => {
   const [error, setError] = useState(null);
+  const [checkError, setCheckError] = useState(false);
+  const [checkUser, setCheckUser] = useState(false);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
@@ -36,12 +38,19 @@ const Register = () => {
 
     if (res.status === 401) {
       setError(data.message);
+      setCheckError(true);
       console.log(data.message);
     } else {
+      setCheckError(false);
+      setCheckUser(true);
       if (token) {
-        navigate("/table");
+        setTimeout(() => {
+          navigate("/table");
+        }, 2000);
       } else {
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       }
       console.log("Data added successfully");
     }
@@ -171,7 +180,12 @@ const Register = () => {
           </div>
         ) : null}
       </form>
-      {error ? <Alert severity="error">{error}</Alert> : null}
+      {checkError && <Alert severity="error">{error}</Alert>}
+      {!token
+        ? checkUser && <Alert severity="success">Signed Up Successfuly</Alert>
+        : checkUser && (
+            <Alert severity="success">User Added Successfully</Alert>
+          )}
     </div>
   );
 };

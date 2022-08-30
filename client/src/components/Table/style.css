@@ -1,6 +1,10 @@
 .app {
     margin: 100px !important;
 }
+.app-modal {
+    margin: 100px !important;
+    opacity: 0.2;
+}
 .app button {
     margin-bottom: 5px !important;
 }

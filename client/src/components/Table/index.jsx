@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import Modal from "../Modal/index";
+import Alert from "@mui/material/Alert";
 import "./style.css";
 
 const Table = () => {
   const [tableData, setTableData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
+  const [checkUser, setCheckUser] = useState(false);
 
   const navigate = useNavigate();
 
@@ -18,11 +20,11 @@ const Table = () => {
     const data = await res.json();
 
     if (res.status === 422 || !data) {
-      console.log("Error");
+      
     } else {
       setTableData(data);
-      console.log(data)
-      console.log("Data displayed successfully");
+      
+      
     }
   };
 
@@ -36,12 +38,15 @@ const Table = () => {
     });
 
     const data = await res.json();
-    console.log(data);
+    
 
     if (res.status === 422 || !data) {
-      console.log("Error");
+      
     } else {
-      console.log("Data deleted successfully");
+      setCheckUser(true);
+      setTimeout(() => {
+        setCheckUser(false);
+      }, 1000);
       getTableData();
     }
   };
@@ -59,7 +64,7 @@ const Table = () => {
         deleteUser={deleteUser}
         setOpenModal={setOpenModal}
       />
-      <div className="app">
+      <div className={openModal ? "app-modal" : "app"}>
         <div className="table-buttons">
           <Link to="/register">
             <button type="button" className="btn btn-primary">
@@ -125,6 +130,7 @@ const Table = () => {
             ))}
           </tbody>
         </table>
+        {checkUser && <Alert severity="warning">User Deleted Successfully!!!</Alert>}
       </div>
     </>
   );

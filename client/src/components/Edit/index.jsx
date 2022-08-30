@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import { editSchema } from "../../utils/schemas/index";
+import Alert from "@mui/material/Alert";
 import "./style.css";
 
 const Edit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const { data } = location.state
-  
+
+  const { data } = location.state;
+
+  const [checkUser, setCheckUser] = useState(false);
   const [isAdmin, setIsAdmin] = useState(data.isAdmin);
 
   const { id } = useParams("");
@@ -37,7 +39,10 @@ const Edit = () => {
     if (res.status === 422 || !data) {
       console.log("Error");
     } else {
-      navigate("/table");
+      setCheckUser(true);
+      setTimeout(() => {
+        navigate("/table");
+      }, 2000);
       console.log("Data Edited successfully");
     }
   };
@@ -147,8 +152,10 @@ const Edit = () => {
           Edit
         </button>
       </form>
+      {checkUser && <Alert severity="success">User Edited Successfully</Alert>}
     </div>
   );
 };
 
 export default Edit;
+//<Alert severity="success">This is a success alert — check it out!</Alert>

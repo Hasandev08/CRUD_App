@@ -7,6 +7,8 @@ import "./style.css";
 
 function Login({ setToken }) {
   const [error, setError] = useState(null);
+  const [checkError, setCheckError] = useState(false);
+  const [checkUser, setCheckUser] = useState(false);
   const navigate = useNavigate();
 
   const login = async (values) => {
@@ -28,11 +30,16 @@ function Login({ setToken }) {
 
     if (res.status === 400 || !data) {
       setError(data.message);
+      setCheckError(true);
     } else {
       if (data.token) {
         localStorage.setItem("token", data.token);
         setToken(data.token);
-        navigate("/table");
+        setCheckError(false);
+        setCheckUser(true);
+        setTimeout(() => {
+          navigate("/table");
+        }, 2000);
         console.log("Logged in successful");
       } else {
         console.log("Error");
@@ -93,7 +100,8 @@ function Login({ setToken }) {
           </Link>
         </div>
       </form>
-      {error ? <Alert severity="error">{error}</Alert> : null}
+      {checkError && <Alert severity="error">{error}</Alert>}
+      {checkUser && <Alert severity="success">Logged In Successfuly</Alert>}
     </div>
   );
 }
